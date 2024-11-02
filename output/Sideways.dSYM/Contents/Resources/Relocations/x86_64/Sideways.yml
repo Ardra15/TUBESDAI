@@ -1,0 +1,13 @@
+---
+triple:          'x86_64-apple-darwin'
+binary-path:     '/Users/timothys/Downloads/Semester 5/DAI/output/Sideways'
+relocations:
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100001200, symSize: 0x230 }
+  - { offsetInCU: 0x41, offset: 0x41, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x0, symBinAddr: 0x100001200, symSize: 0x230 }
+  - { offsetInCU: 0xB5, offset: 0xB5, size: 0x8, addend: 0x0, symName: _initialize_cube, symObjAddr: 0x230, symBinAddr: 0x100001430, symSize: 0x1E0 }
+  - { offsetInCU: 0x1A6, offset: 0x1A6, size: 0x8, addend: 0x0, symName: _evaluate, symObjAddr: 0x410, symBinAddr: 0x100001610, symSize: 0x3C0 }
+  - { offsetInCU: 0x374, offset: 0x374, size: 0x8, addend: 0x0, symName: _print_cube, symObjAddr: 0x7D0, symBinAddr: 0x1000019D0, symSize: 0xD0 }
+  - { offsetInCU: 0x3EC, offset: 0x3EC, size: 0x8, addend: 0x0, symName: _generate_all_neighbors, symObjAddr: 0x8A0, symBinAddr: 0x100001AA0, symSize: 0x320 }
+  - { offsetInCU: 0x509, offset: 0x509, size: 0x8, addend: 0x0, symName: _copy_cube, symObjAddr: 0xBC0, symBinAddr: 0x100001DC0, symSize: 0xC0 }
+  - { offsetInCU: 0x58F, offset: 0x58F, size: 0x8, addend: 0x0, symName: _swap, symObjAddr: 0xC80, symBinAddr: 0x100001E80, symSize: 0x2C }
+...
