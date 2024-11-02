@@ -7,9 +7,9 @@
 #define TOTAL_NUMBERS (N * N * N)
 #define MAGIC_NUMBER (N * (TOTAL_NUMBERS + 1)) / 2
 #define INITIAL_TEMPERATURE 1000.0
-#define FINAL_TEMPERATURE 0.1
-#define ALPHA 0.99
-#define MAX_ITERATIONS 10000
+#define FINAL_TEMPERATURE 0
+#define ALPHA 0.999
+#define MAX_ITERATIONS 100000
 
 // Function prototypes
 void initialize_cube(int cube[N][N][N]);
