@@ -1,0 +1,13 @@
+{
+  "files.associations": {
+    "__bit_reference": "c",
+    "ios": "c",
+    "istream": "c",
+    "ostream": "c",
+    "sstream": "c",
+    "streambuf": "c",
+    "string_view": "c",
+    "tuple": "c",
+    "variant": "c"
+  }
+}
