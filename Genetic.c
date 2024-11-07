@@ -1,14 +1,15 @@
-#include "cubeUtils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <omp.h>  // Include OpenMP for parallel processing
+#include <math.h>
 
 #define POPULATION_SIZE 100
 #define GENERATIONS 1000
 #define TOURNAMENT_SIZE 5
 #define ELITISM 2           // Number of elite individuals to retain
 #define DYNAMIC_MUTATION_RATE  // Enable dynamic mutation rate adjustment
+#define N 5
 
 typedef struct {
     int cube[N][N][N];  // The N x N x N cube
@@ -16,6 +17,36 @@ typedef struct {
 } Individual;
 
 double mutation_rate = 0.05; // Starting mutation rate
+
+// Initialize the cube with numbers from 1 to TOTAL_NUMBERS randomly
+void initialize_random_single_cube(int cube[N][N][N]) {
+    int used[N * N * N] = {0};  // Track used values
+    int val;
+    
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            for (int k = 0; k < N; k++) {
+                do {
+                    val = (rand() % (N * N * N)) + 1;
+                } while (used[val - 1]);  // Ensure uniqueness
+                cube[i][j][k] = val;
+                used[val - 1] = 1;
+            }
+        }
+    }
+}
+
+int objective_function(int cube[N][N][N]) {
+    int fitness = 0;
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            for (int k = 0; k < N; k++) {
+                fitness += abs(cube[i][j][k] - (i * N * N + j * N + k + 1));  // Example calculation
+            }
+        }
+    }
+    return fitness;
+}
 
 // Function to initialize the population with random individuals
 void initialize_population(Individual population[]) {
@@ -179,8 +210,7 @@ void genetic_algorithm(int cube[N][N][N]) {
     }
 
     clock_t end = clock();
-    printf("Genetic Algorithm: Generations=%d, Time=%.2f seconds, Best Cost=%d\n", 
-           generation, (double)(end - start) / CLOCKS_PER_SEC, population[best_idx].fitness);
+    printf("Genetic Algorithm: Generations=%d, Time=%.2f seconds, Best Cost=%d\n", generation, (double)(end - start) / CLOCKS_PER_SEC, population[best_idx].fitness);
 
     // Copy the best solution back to the original cube
     for (int i = 0; i < N; i++) {
@@ -190,4 +220,26 @@ void genetic_algorithm(int cube[N][N][N]) {
             }
         }
     }
+}
+
+// Main function
+int main() {
+    int cube[N][N][N];  // The 5x5x5 cube to be optimized
+
+    // Run the genetic algorithm on the cube
+    genetic_algorithm(cube);
+
+    // Print the final solution (optimized cube)
+    printf("Optimized 5x5x5 Cube:\n");
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            for (int k = 0; k < N; k++) {
+                printf("%d ", cube[i][j][k]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
+
+    return 0;
 }
