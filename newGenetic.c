@@ -144,12 +144,12 @@ int find_best_individual(Individual population[], int population_size) {
 }
 
 // Main genetic algorithm
-void genetic_algorithm(int cube[N][N][N], int population_size, int generations) {
+void genetic_algorithm(int cube[N][N][N], int population_size, int iterations) {
     Individual population[population_size];
     Individual new_population[population_size];
     initialize_population(population, population_size);
 
-    int generation = 0;
+    int iteration = 0;
     clock_t start = clock();
     int best_idx = find_best_individual(population, population_size);
 
@@ -158,16 +158,17 @@ void genetic_algorithm(int cube[N][N][N], int population_size, int generations) 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             for (int k = 0; k < N; k++) {
-                printf("%d ", population[best_idx].cube[i][j][k]);
+                printf("%3d ", population[best_idx].cube[i][j][k]);
             }
             printf("\n");
         }
+        printf("\n");
     }
     printf("Initial Fitness: %d\n", population[best_idx].fitness);
     printf("Population Size: %d\n", population_size);
-    printf("Generations: %d\n", generations);
+    printf("Iterations: %d\n", iterations);
 
-    while (generation < generations) {
+    while (iteration < iterations) {
         #pragma omp parallel for
         for (int i = 0; i < 2; i++) {
             new_population[i] = population[best_idx];
@@ -187,7 +188,7 @@ void genetic_algorithm(int cube[N][N][N], int population_size, int generations) 
         }
 
         best_idx = find_best_individual(population, population_size);
-        generation++;
+        iteration++;
 
         if (population[best_idx].fitness == 0) {
             break;
@@ -195,7 +196,7 @@ void genetic_algorithm(int cube[N][N][N], int population_size, int generations) 
     }
 
     clock_t end = clock();
-    printf("Genetic Algorithm: Generations=%d, Time=%.2f seconds, Best Cost=%d\n", generation, (double)(end - start) / CLOCKS_PER_SEC, population[best_idx].fitness);
+    printf("Genetic Algorithm: Iterations=%d, Time=%.2f seconds, Best Cost=%d\n", iteration, (double)(end - start) / CLOCKS_PER_SEC, population[best_idx].fitness);
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
@@ -211,7 +212,7 @@ int main() {
     srand(time(NULL));  // Seed the random number generator with the current time
 
     int population_size = 1000;  // Set your population size here
-    int iterations = 10;      // Set your number of generations here
+    int iterations = 16000;      // Set your number of iterations here
     int cube[N][N][N];  // The 5x5x5 cube to be optimized
 
     genetic_algorithm(cube, population_size, iterations);
@@ -220,10 +221,11 @@ int main() {
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             for (int k = 0; k < N; k++) {
-                printf("%d ", cube[i][j][k]);
+                printf("%3d ", cube[i][j][k]);
             }
             printf("\n");
         }
+        printf("\n");
     }
 
     return 0;

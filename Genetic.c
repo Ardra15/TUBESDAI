@@ -5,7 +5,7 @@
 #include <math.h>
 
 #define POPULATION_SIZE 100
-#define GENERATIONS 1000
+#define ITERATIONS 1000
 #define TOURNAMENT_SIZE 5
 #define ELITISM 2
 #define N 5
@@ -70,8 +70,7 @@ int tournament_selection(Individual population[]) {
 
 // Crossover using cycle crossover (CX)
 void crossover(Individual *parent1, Individual *parent2, Individual *child) {
-    int map[N * N * N] = {0};  
-    int idx = 0;
+    int map[N * N * N] = {0};
 
     // Initialize the child with -1 values (unset)
     for (int i = 0; i < N; i++) {
@@ -166,17 +165,15 @@ void genetic_algorithm(int cube[N][N][N]) {
     Individual new_population[POPULATION_SIZE];
     initialize_population(population);
 
-    int generation = 0;
+    int iteration = 0;
     clock_t start = clock();
     int best_idx = find_best_individual(population);
 
-    while (generation < GENERATIONS) {
-        #pragma omp parallel for
+    while (iteration < ITERATIONS) {
         for (int i = 0; i < ELITISM; i++) {
             new_population[i] = population[best_idx];
         }
 
-        #pragma omp parallel for
         for (int i = ELITISM; i < POPULATION_SIZE; i++) {
             int parent1_idx = tournament_selection(population);
             int parent2_idx = tournament_selection(population);
@@ -184,7 +181,6 @@ void genetic_algorithm(int cube[N][N][N]) {
             mutate(&new_population[i]);
         }
 
-        #pragma omp parallel for
         for (int i = 0; i < POPULATION_SIZE; i++) {
             population[i] = new_population[i];
         }
@@ -193,7 +189,7 @@ void genetic_algorithm(int cube[N][N][N]) {
 
         best_idx = find_best_individual(population);
         
-        generation++;
+        iteration++;
 
         if (population[best_idx].fitness == 0) {
             break;
@@ -201,7 +197,7 @@ void genetic_algorithm(int cube[N][N][N]) {
     }
 
     clock_t end = clock();
-    printf("Genetic Algorithm: Generations=%d, Time=%.2f seconds, Best Cost=%d\n", generation, (double)(end - start) / CLOCKS_PER_SEC, population[best_idx].fitness);
+    printf("Genetic Algorithm: Iterations=%d, Time=%.2f seconds, Best Cost=%d\n", iteration, (double)(end - start) / CLOCKS_PER_SEC, population[best_idx].fitness);
 
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
