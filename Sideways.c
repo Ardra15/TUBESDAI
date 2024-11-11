@@ -6,7 +6,7 @@
 #define N 5
 #define TOTAL_NUMBERS (N * N * N)
 #define MAGIC_NUMBER (N * (TOTAL_NUMBERS + 1)) / 2
-#define MAX_SIDEWAYS_MOVES 1000000000  // Limit for sideways moves
+#define MAX_SIDEWAYS_MOVES 5000  // Limit for sideways moves
 
 // Function prototypes
 void initialize_cube(int cube[N][N][N]);
@@ -17,12 +17,19 @@ void generate_all_neighbors(int cube[N][N][N], int best_cube[N][N][N], int *best
 void copy_cube(int src[N][N][N], int dest[N][N][N]);
 
 int main() {
+    clock_t start_time = clock();
     srand(time(0));
 
     int current_cube[N][N][N];
     int best_cube[N][N][N];
     int current_error, best_error;
     int sideways_moves = 0;
+
+    FILE *fptr = fopen("objective_function.txt", "w");
+    if (fptr == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
 
     // Initialize the cube with random values
     initialize_cube(current_cube);
@@ -51,16 +58,19 @@ int main() {
             copy_cube(best_cube, current_cube);
             current_error = best_error;
             sideways_moves++;  // Increment sideways move counter
-            printf("Sideways move: %d\n", sideways_moves);
+            // printf("Sideways move: %d\n", sideways_moves);
         }
         // If no better neighbor and sideways limit is reached, stop (local optimum)
         else {
             printf("Reached local optimum or sideways move limit. Stopping.\n");
             break;
         }
+        
+        fprintf(fptr, "%d %d\n", iterations, current_error);
+
 
         // Print status every 10 iterations
-        if (iterations % 10 == 0) {
+        if (iterations % 1000 == 0) {
             printf("Iteration %d - Current Error: %d\n", iterations, current_error);
         }
     }
@@ -68,6 +78,15 @@ int main() {
     printf("Final Cube after %d iterations:\n", iterations);
     print_cube(current_cube);
     printf("Final Error: %d\n", current_error);
+    fclose(fptr);
+
+    // Record the end time
+    clock_t end_time = clock();
+
+    // Calculate the time difference in seconds
+    double duration = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+
+    printf("Program execution time: %.2f seconds\n", duration);
 
     return 0;
 }
@@ -100,13 +119,30 @@ void initialize_cube(int cube[N][N][N]) {
 void print_cube(int cube[N][N][N]) {
     for (int i = 0; i < N; i++) {
         printf("Slice %d:\n", i + 1);
+        
+        // Print the top border for the slice
+        printf("   +");
+        for (int k = 0; k < N; k++) {
+            printf("-----+");
+        }
+        printf("\n");
+
         for (int j = 0; j < N; j++) {
+            printf("   | ");
             for (int k = 0; k < N; k++) {
-                printf("%3d ", cube[i][j][k]);
+                printf("%3d | ", cube[i][j][k]);
+            }
+            printf("\n");
+            
+            // Print the row separator
+            printf("   +");
+            for (int k = 0; k < N; k++) {
+                printf("-----+");
             }
             printf("\n");
         }
-        printf("\n");
+        
+        printf("\n"); // Add a newline between slices for better readability
     }
 }
 
@@ -161,7 +197,7 @@ int evaluate(int cube[N][N][N]) {
     }
     error += abs(sum - MAGIC_NUMBER);
 
-    // Evaluate diagonal in slices
+    // Evaluate diagonals in horizontal (x-y) slices
     for (int i = 0; i < N; i++) {
         sum = 0;
         for (int j = 0; j < N; j++) {
@@ -172,6 +208,36 @@ int evaluate(int cube[N][N][N]) {
         sum = 0;
         for (int j = 0; j < N; j++) {
             sum += cube[i][j][N - j - 1];
+        }
+        error += abs(sum - MAGIC_NUMBER);
+    }
+
+    // Evaluate diagonals in vertical (y-z) slices
+    for (int j = 0; j < N; j++) {
+        sum = 0;
+        for (int k = 0; k < N; k++) {
+            sum += cube[k][j][k];
+        }
+        error += abs(sum - MAGIC_NUMBER);
+
+        sum = 0;
+        for (int k = 0; k < N; k++) {
+            sum += cube[N - k - 1][j][k];
+        }
+        error += abs(sum - MAGIC_NUMBER);
+    }
+
+    // Evaluate diagonals in vertical (x-z) slices
+    for (int k = 0; k < N; k++) {
+        sum = 0;
+        for (int i = 0; i < N; i++) {
+            sum += cube[i][i][k];
+        }
+        error += abs(sum - MAGIC_NUMBER);
+
+        sum = 0;
+        for (int i = 0; i < N; i++) {
+            sum += cube[i][N - i - 1][k];
         }
         error += abs(sum - MAGIC_NUMBER);
     }
