@@ -33,8 +33,8 @@ void initialize_random_single_cube(int cube[N][N][N]) {
     }
 }
 
-int objective_function(int cube[N][N][N]) {
-    int fitness = 0;
+int evaluate(int cube[N][N][N]) {
+    int error = 0;
     int sum;
 
     // Evaluate rows
@@ -44,7 +44,7 @@ int objective_function(int cube[N][N][N]) {
             for (int k = 0; k < N; k++) {
                 sum += cube[i][j][k];
             }
-            fitness += abs(sum - MAGIC_NUMBER);
+            error += abs(sum - MAGIC_NUMBER);
         }
     }
 
@@ -55,7 +55,7 @@ int objective_function(int cube[N][N][N]) {
             for (int i = 0; i < N; i++) {
                 sum += cube[i][j][k];
             }
-            fitness += abs(sum - MAGIC_NUMBER);
+            error += abs(sum - MAGIC_NUMBER);
         }
     }
 
@@ -66,7 +66,7 @@ int objective_function(int cube[N][N][N]) {
             for (int j = 0; j < N; j++) {
                 sum += cube[i][j][k];
             }
-            fitness += abs(sum - MAGIC_NUMBER);
+            error += abs(sum - MAGIC_NUMBER);
         }
     }
 
@@ -75,37 +75,68 @@ int objective_function(int cube[N][N][N]) {
     for (int i = 0; i < N; i++) {
         sum += cube[i][i][i];
     }
-    fitness += abs(sum - MAGIC_NUMBER);
+    error += abs(sum - MAGIC_NUMBER);
 
     sum = 0;
     for (int i = 0; i < N; i++) {
         sum += cube[i][i][N - i - 1];
     }
-    fitness += abs(sum - MAGIC_NUMBER);
+    error += abs(sum - MAGIC_NUMBER);
 
     // Evaluate diagonal in slices
+// Evaluate diagonals in horizontal (x-y) slices
     for (int i = 0; i < N; i++) {
         sum = 0;
         for (int j = 0; j < N; j++) {
             sum += cube[i][j][j];
         }
-        fitness += abs(sum - MAGIC_NUMBER);
+        error += abs(sum - MAGIC_NUMBER);
 
         sum = 0;
         for (int j = 0; j < N; j++) {
             sum += cube[i][j][N - j - 1];
         }
-        fitness += abs(sum - MAGIC_NUMBER);
+        error += abs(sum - MAGIC_NUMBER);
     }
 
-    return fitness;
+    // Evaluate diagonals in vertical (y-z) slices
+    for (int j = 0; j < N; j++) {
+        sum = 0;
+        for (int k = 0; k < N; k++) {
+            sum += cube[k][j][k];
+        }
+        error += abs(sum - MAGIC_NUMBER);
+
+        sum = 0;
+        for (int k = 0; k < N; k++) {
+            sum += cube[N - k - 1][j][k];
+        }
+        error += abs(sum - MAGIC_NUMBER);
+    }
+
+    // Evaluate diagonals in vertical (x-z) slices
+    for (int k = 0; k < N; k++) {
+        sum = 0;
+        for (int i = 0; i < N; i++) {
+            sum += cube[i][i][k];
+        }
+        error += abs(sum - MAGIC_NUMBER);
+
+        sum = 0;
+        for (int i = 0; i < N; i++) {
+            sum += cube[i][N - i - 1][k];
+        }
+        error += abs(sum - MAGIC_NUMBER);
+    }
+
+    return error;
 }
 
 // Initialize the population with random individuals
 void initialize_population(Individual population[], int population_size) {
     for (int i = 0; i < population_size; i++) {
         initialize_random_single_cube(population[i].cube);
-        population[i].fitness = objective_function(population[i].cube);
+        population[i].fitness = evaluate(population[i].cube);
     }
 }
 
@@ -121,7 +152,7 @@ int tournament_selection(Individual population[], int population_size) {
     return best;
 }
 
-// Crossover using cycle crossover (CX)
+// Crossover 
 void crossover(Individual *parent1, Individual *parent2, Individual *child) {
     int map[N * N * N] = {0};  
     int idx = 0;
@@ -172,7 +203,7 @@ void crossover(Individual *parent1, Individual *parent2, Individual *child) {
         }
     }
 
-    child->fitness = objective_function(child->cube);
+    child->fitness = evaluate(child->cube);
 }
 
 // Mutation function using swap to ensure unique values
@@ -186,7 +217,7 @@ void mutate(Individual *individual) {
         individual->cube[i1][j1][k1] = individual->cube[i2][j2][k2];
         individual->cube[i2][j2][k2] = temp;
     }
-    individual->fitness = objective_function(individual->cube);
+    individual->fitness = evaluate(individual->cube);
 }
 
 // Find the best individual in the population
