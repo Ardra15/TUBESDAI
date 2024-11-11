@@ -8,6 +8,7 @@ Repositori ini berisi _source code_ dan dokumen **Tugas Besar 1** mata kuliah **
 
 _Source code_ algoritma dibuat dengan menggunakan bahasa C, sedangkan _source code_ visualisasi dibuat dengan menggunakan bahasa Python. 
 
+
 # Cara Menjalankan Program
 
 1. Pastikan kompiler bahasa C (GCC) sudah terinstal di komputer
@@ -15,8 +16,9 @@ _Source code_ algoritma dibuat dengan menggunakan bahasa C, sedangkan _source co
 3. Kompilasi program menggunakan `gcc -o main nama_program.c`
 4. Jalankan program menggunakan `./main`
 
+
 # Pembagian Tugas 
-## 18222012 Syakira Fildza
+### 18222012 Syakira Fildza
 - Membuat template dan merapikan laporan
 - Membuat struktur repositori dan file README
 - Membuat deskripsi fungsi/kelas genetic algorithm	
@@ -25,14 +27,14 @@ _Source code_ algoritma dibuat dengan menggunakan bahasa C, sedangkan _source co
 - Membuat kesimpulan dan saran
 - Membuat deskripsi masalah
 
-## 18222050 Nicolaas Heru Dreandachrista
+### 18222050 Nicolaas Heru Dreandachrista
 - Membuat source code genetic algorithm
 - Membuat source code visualisasi eksperimen genetic algorithm
 - Melakukan iterasi dan plot terhadap 2 variasi genetic algorithm
 - Melakukan analisis eksperimen genetic algorithm
 - Membuat kesimpulan dan saran
 
-## 18222134 Ardra Rafif Sahasika
+### 18222134 Ardra Rafif Sahasika
 - Membuat source code sideways move
 - Membuat source code simulated annealing
 - Membuat visualisasi eksperimen simulated annealing
