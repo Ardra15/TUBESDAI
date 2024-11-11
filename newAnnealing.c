@@ -22,7 +22,6 @@ void copy_cube(int src[N][N][N], int dest[N][N][N]);
 double acceptance_probability(int current_error, int new_error, double temperature);
 
 int main() {
-    clock_t start_time = clock();
     srand(time(0));
 
     int current_cube[N][N][N];
@@ -74,7 +73,7 @@ int main() {
         temperature *= ALPHA;
 
         // Print status every 1000 iterations
-        if (iterations % 10000 == 0) {
+        if (iterations % 50 == 0) {
             printf("Iteration %d - Current Error: %d - Temperature: %.2f\n", iterations, current_error, temperature);
         }
     }
@@ -91,14 +90,7 @@ int main() {
     }
     fclose(fptr);
     printf("Acceptance probabilities saved to 'acceptance_probs.txt'.\n");
-    
-    // Record the end time
-    clock_t end_time = clock();
 
-    // Calculate the time difference in seconds
-    double duration = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-
-    printf("Program execution time: %.2f seconds\n", duration);
     return 0;
 }
 
@@ -130,30 +122,13 @@ void initialize_cube(int cube[N][N][N]) {
 void print_cube(int cube[N][N][N]) {
     for (int i = 0; i < N; i++) {
         printf("Slice %d:\n", i + 1);
-        
-        // Print the top border for the slice
-        printf("   +");
-        for (int k = 0; k < N; k++) {
-            printf("-----+");
+        for (int j = 0; j < N; j++) {
+            for (int k = 0; k < N; k++) {
+                printf("%3d ", cube[i][j][k]);
+            }
+            printf("\n");
         }
         printf("\n");
-
-        for (int j = 0; j < N; j++) {
-            printf("   | ");
-            for (int k = 0; k < N; k++) {
-                printf("%3d | ", cube[i][j][k]);
-            }
-            printf("\n");
-            
-            // Print the row separator
-            printf("   +");
-            for (int k = 0; k < N; k++) {
-                printf("-----+");
-            }
-            printf("\n");
-        }
-        
-        printf("\n"); // Add a newline between slices for better readability
     }
 }
 
@@ -209,7 +184,6 @@ int evaluate(int cube[N][N][N]) {
     error += abs(sum - MAGIC_NUMBER);
 
     // Evaluate diagonal in slices
-// Evaluate diagonals in horizontal (x-y) slices
     for (int i = 0; i < N; i++) {
         sum = 0;
         for (int j = 0; j < N; j++) {
@@ -220,36 +194,6 @@ int evaluate(int cube[N][N][N]) {
         sum = 0;
         for (int j = 0; j < N; j++) {
             sum += cube[i][j][N - j - 1];
-        }
-        error += abs(sum - MAGIC_NUMBER);
-    }
-
-    // Evaluate diagonals in vertical (y-z) slices
-    for (int j = 0; j < N; j++) {
-        sum = 0;
-        for (int k = 0; k < N; k++) {
-            sum += cube[k][j][k];
-        }
-        error += abs(sum - MAGIC_NUMBER);
-
-        sum = 0;
-        for (int k = 0; k < N; k++) {
-            sum += cube[N - k - 1][j][k];
-        }
-        error += abs(sum - MAGIC_NUMBER);
-    }
-
-    // Evaluate diagonals in vertical (x-z) slices
-    for (int k = 0; k < N; k++) {
-        sum = 0;
-        for (int i = 0; i < N; i++) {
-            sum += cube[i][i][k];
-        }
-        error += abs(sum - MAGIC_NUMBER);
-
-        sum = 0;
-        for (int i = 0; i < N; i++) {
-            sum += cube[i][N - i - 1][k];
         }
         error += abs(sum - MAGIC_NUMBER);
     }
