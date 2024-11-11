@@ -5,6 +5,8 @@
 #include <math.h>
 
 #define N 5  // Size of the cube
+#define TOTAL_NUMBERS (N * N * N)
+#define MAGIC_NUMBER (N * (TOTAL_NUMBERS + 1)) / 2
 
 typedef struct {
     int cube[N][N][N];  // The N x N x N cube
@@ -31,16 +33,71 @@ void initialize_random_single_cube(int cube[N][N][N]) {
     }
 }
 
-// Calculate fitness using the difference from the expected value
 int objective_function(int cube[N][N][N]) {
     int fitness = 0;
+    int sum;
+
+    // Evaluate rows
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
+            sum = 0;
             for (int k = 0; k < N; k++) {
-                fitness += abs(cube[i][j][k] - (i * N * N + j * N + k + 1));
+                sum += cube[i][j][k];
             }
+            fitness += abs(sum - MAGIC_NUMBER);
         }
     }
+
+    // Evaluate columns
+    for (int j = 0; j < N; j++) {
+        for (int k = 0; k < N; k++) {
+            sum = 0;
+            for (int i = 0; i < N; i++) {
+                sum += cube[i][j][k];
+            }
+            fitness += abs(sum - MAGIC_NUMBER);
+        }
+    }
+
+    // Evaluate pillars
+    for (int i = 0; i < N; i++) {
+        for (int k = 0; k < N; k++) {
+            sum = 0;
+            for (int j = 0; j < N; j++) {
+                sum += cube[i][j][k];
+            }
+            fitness += abs(sum - MAGIC_NUMBER);
+        }
+    }
+
+    // Evaluate main space diagonals
+    sum = 0;
+    for (int i = 0; i < N; i++) {
+        sum += cube[i][i][i];
+    }
+    fitness += abs(sum - MAGIC_NUMBER);
+
+    sum = 0;
+    for (int i = 0; i < N; i++) {
+        sum += cube[i][i][N - i - 1];
+    }
+    fitness += abs(sum - MAGIC_NUMBER);
+
+    // Evaluate diagonal in slices
+    for (int i = 0; i < N; i++) {
+        sum = 0;
+        for (int j = 0; j < N; j++) {
+            sum += cube[i][j][j];
+        }
+        fitness += abs(sum - MAGIC_NUMBER);
+
+        sum = 0;
+        for (int j = 0; j < N; j++) {
+            sum += cube[i][j][N - j - 1];
+        }
+        fitness += abs(sum - MAGIC_NUMBER);
+    }
+
     return fitness;
 }
 
